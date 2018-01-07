@@ -3,15 +3,18 @@
 This package demonstrates the syntax variant of currying.
 For theoretical background and history: [Currying](https://en.wikipedia.org/wiki/Currying).
 
-Essentially it allowe us to define
+Essentially it allows to define
 ```
-    f(x)(y)(z) = f_old(x,y,z)
+    @curry f(x)(y)(z) = F(x,y,z)
     
 meaning the same as
 
-    f(x) = (y) -> ( (z) -> f_old(x,y,z) )
-```    
-
+    f = (x) -> (y) -> (z) -> F(x,y,z)
+and
+    f(x) = (y) -> (z) -> F(x,y,z)
+```
+The argument lists may be tuples and contain ellipses ... after the final argument and
+keyword arguments.
 
 ## usage
 
@@ -50,9 +53,9 @@ julia> :(f(x)(y,z) = nothing)
           nothing
       end)
 
-julia> Curry.curry(LineNumberNode(1), :(f(x)(y,z) = nothing))
+julia> curry(:(f(x)(y,z) = nothing))
 :($(Expr(:escape, :(f(x) = begin
-          #= line 1 =#
+          #= line 0 =#
           (y, z)->begin
                   #= REPL[22]:1 =#
                   nothing
@@ -79,7 +82,7 @@ julia> ldump(:(f(x)(y,z) = nothing))
   )
 )
 
-julia> ldump(Curry.curry(LineNumberNode(0), :(f(x)(y,z) = nothing)))
+julia> ldump(curry(:(f(x)(y,z) = nothing)))
 (escape
   (=
     (call
