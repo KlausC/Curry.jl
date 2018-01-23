@@ -2,6 +2,7 @@ module Curry
 
 export @curry, curry
 export ldump, sldump
+export generic_expr_walker, remove_lines!
 
 """
    @curry <function definition>
@@ -102,5 +103,34 @@ function sldump(ex::Any; indent="", delta="  ")
     ldump(io, ex, indent=indent, delta=delta)
     String(take!(io))
 end
+
+"""
+    Expression tree walker
+"""
+function generic_expr_walker(a::Function, ex::Expr)
+    i = 1
+    j = 0
+    while i <= length(ex.args)
+        arg = ex.args[i]
+        argn = a(arg)
+        if argn != nothing
+            j += 1
+            argn = coalesce(argn)
+            if j != i || argn != arg
+                ex.args[j] = argn
+            end
+        end
+        i += 1
+    end
+    resize!(ex.args, j)
+    ex
+end
+
+identity_walker(ex::Expr) = generic_expr_walker(example_walker, ex)
+identity_walker_walker(x) = Some(x)
+
+remove_lines!(ex::Expr) = generic_expr_walker(remove_lines!, ex)
+remove_lines!(::LineNumberNode) = nothing
+remove_lines!(x) = Some(x)
 
 end # module
