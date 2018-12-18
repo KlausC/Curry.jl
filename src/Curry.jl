@@ -31,7 +31,7 @@ end
 
 # implementation.
 function curry!(__source__::LineNumberNode, ex::Expr)
-    ass = findex(occursin([:(=),:function]), ex)
+    ass = findex(isin([:(=),:function]), ex)
     ass != nothing && length(ass.args) == 2 || error("no function definition")
     cal = ass.args[1] # the lhs of = or f(..) part after function
 
@@ -50,9 +50,11 @@ function curry!(__source__::LineNumberNode, ex::Expr)
     curry!(__source__, ex) # recursively build blocks for further :call s
 end
 
+isin(a) = x -> x in a
+
 # add line info into first block and surround with esc.
 function finish(__source__::LineNumberNode, ex::Expr)
-    blk = findex(equalto(:block), ex)
+    blk = findex(isequal(:block), ex)
     blk != nothing || return esc(ex)
     pushfirst!(blk.args, __source__)
     esc(ex)
