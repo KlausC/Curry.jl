@@ -92,7 +92,7 @@ end
 
 ldump(io::IO, ex::LineNumberNode; indent="", delta="") = nothing
 ldump(io::IO, ex::Any; indent="", delta="") = println(io, indent, typeof(ex), ' ', ex)
-ldump(ex::Any; indent="", delta="  ") = ldump(STDOUT, ex, indent=indent, delta=delta)
+ldump(ex::Any; indent="", delta="  ") = ldump(stdout, ex, indent=indent, delta=delta)
 
 """
     sldump(::Expr[, indent=string, delta=string])
@@ -117,7 +117,7 @@ function generic_expr_walker(a::Function, ex::Expr)
         argn = a(arg)
         if argn != nothing
             j += 1
-            argn = coalesce(argn)
+            argn = something(argn)
             if j != i || argn != arg
                 ex.args[j] = argn
             end
@@ -129,7 +129,7 @@ function generic_expr_walker(a::Function, ex::Expr)
 end
 
 identity_walker(ex::Expr) = generic_expr_walker(example_walker, ex)
-identity_walker_walker(x) = Some(x)
+example_walker(x) = Some(x)
 
 remove_lines!(ex::Expr) = generic_expr_walker(remove_lines!, ex)
 remove_lines!(::LineNumberNode) = nothing

@@ -1,0 +1,17 @@
+name = "Curry"
+uuid = "3e99c90e-818e-4a32-8abe-1f2bbe1441d5"
+license = "MIT"
+authors = ["Klaus Crusius <klaus.crusius@web.de>"]
+repo = "https://github.com/KlausC/Curry.jl"
+version = "0.1.0"
+
+[deps]
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
